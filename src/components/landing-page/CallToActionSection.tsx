@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function CallToActionSection() {
   return (
     <section className="bg-indigo-700 py-20">
@@ -9,12 +11,12 @@ export default function CallToActionSection() {
           Join thousands of users who are already managing their lives better
           with TodoApp.
         </p>
-        <a
+        <Link
           href="/api/auth/login"
           className="transform rounded-lg bg-white px-10 py-4 text-xl font-bold text-indigo-700 transition duration-300 ease-in-out hover:scale-105 hover:bg-slate-100"
         >
           Sign Up Now - It&apos;s Free!
-        </a>
+        </Link>
       </div>
     </section>
   );
