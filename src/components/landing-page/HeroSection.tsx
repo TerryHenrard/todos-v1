@@ -20,7 +20,7 @@ export default function HeroSection() {
           The simple, beautiful, and effective way to manage your tasks.
         </p>
         <Link
-          href="/sign-in"
+          href="/dashboard"
           className="transform rounded-lg bg-indigo-500 px-8 py-3 text-lg font-bold text-white transition duration-300 ease-in-out hover:scale-105 hover:bg-indigo-600"
         >
           Get Started

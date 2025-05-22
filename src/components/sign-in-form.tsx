@@ -4,8 +4,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Image from 'next/image';
+import Link from 'next/link';
 
-export function LoginForm({
+export function SignInForm({
   className,
   ...props
 }: React.ComponentProps<'div'>) {
@@ -18,7 +19,7 @@ export function LoginForm({
               <div className="flex flex-col items-center text-center">
                 <h1 className="text-2xl font-bold">Welcome back</h1>
                 <p className="text-muted-foreground text-balance">
-                  Login to your Acme Inc account
+                  Login to your TodoApp account
                 </p>
               </div>
               <div className="grid gap-3">
@@ -81,9 +82,9 @@ export function LoginForm({
               </div>
               <div className="text-center text-sm">
                 Don&apos;t have an account?{' '}
-                <a href="#" className="underline underline-offset-4">
+                <Link href="/sign-up" className="underline underline-offset-4">
                   Sign up
-                </a>
+                </Link>
               </div>
             </div>
           </form>
@@ -94,6 +95,7 @@ export function LoginForm({
               className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
               width={600}
               height={300}
+              priority
             />
           </div>
         </CardContent>
