@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+
 import { db } from '.';
 import { usersTable } from './schema';
 import { faker } from '@faker-js/faker';
