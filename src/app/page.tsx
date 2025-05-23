@@ -2,10 +2,10 @@ import HeroSection from '@/components/landing-page/hero-section';
 import FeaturesSection from '@/components/landing-page/features-section';
 import HowItWorksSection from '@/components/landing-page/how-it-work-section';
 import CallToActionSection from '@/components/landing-page/call-to-action-section';
-import Footer from '@/components/landing-page/footer';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
+import Footer from '@/components/layout/footer';
 
 export default async function HomePage() {
   const session = await auth.api.getSession({ headers: await headers() });
