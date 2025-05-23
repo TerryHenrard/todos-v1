@@ -1,6 +1,6 @@
 import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
-import Providers from '@/components/Providers';
+import Providers from '@/components/providers';
 
 interface RootLayoutProps {
   children: React.ReactNode;
