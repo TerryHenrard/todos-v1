@@ -18,6 +18,7 @@ import MetaLogo from './ui/logos/meta-logo';
 import Loader from './ui/loader';
 import { useState } from 'react';
 import { Eye, EyeClosed } from 'lucide-react';
+import { redirect } from 'next/navigation';
 
 interface SignInFormValues {
   email: string;
@@ -46,7 +47,6 @@ export function SignInForm({
     mutationFn: async (value: SignInFormValues) => {
       return await authClient.signIn.email({
         ...value,
-        callbackURL: '/dashboard',
       });
     },
   });
@@ -62,7 +62,12 @@ export function SignInForm({
     },
 
     onSubmit: async ({ value }) => {
-      const { error } = await mutation.mutateAsync({ ...value });
+      const { data, error } = await mutation.mutateAsync({ ...value });
+      console.log(data);
+
+      if (data) {
+        redirect(`/dashboard/${data.user.id}`);
+      }
 
       if (error) {
         switch (error.code) {
@@ -231,3 +236,4 @@ export function SignInForm({
     </div>
   );
 }
+

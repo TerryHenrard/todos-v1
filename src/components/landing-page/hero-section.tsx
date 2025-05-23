@@ -1,7 +1,10 @@
+import { getSession } from '@/lib/server-utils';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default function HeroSection() {
+export default async function HeroSection() {
+  const session = await getSession();
+
   return (
     <section className="py-20 text-center">
       <div className="container mx-auto px-4">
@@ -20,7 +23,7 @@ export default function HeroSection() {
           The simple, beautiful, and effective way to manage your tasks.
         </p>
         <Link
-          href="/dashboard"
+          href={session ? `/dashboard/${session.user.id}` : '/sign-in'}
           className="transform rounded-lg bg-indigo-500 px-8 py-3 text-lg font-bold text-white transition duration-300 ease-in-out hover:scale-105 hover:bg-indigo-600"
         >
           Get Started
@@ -29,3 +32,4 @@ export default function HeroSection() {
     </section>
   );
 }
+
