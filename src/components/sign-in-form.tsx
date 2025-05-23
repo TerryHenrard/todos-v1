@@ -12,13 +12,13 @@ import { useForm } from '@tanstack/react-form';
 import { authClient } from '@/lib/auth-client';
 import { toast } from 'sonner';
 import { useMutation } from '@tanstack/react-query';
-import AppleLogo from './ui/logos/apple-logo';
 import GoogleLogo from './ui/logos/google-logo';
 import MetaLogo from './ui/logos/meta-logo';
 import Loader from './ui/loader';
 import { useState } from 'react';
 import { Eye, EyeClosed } from 'lucide-react';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import GithubLogo from './ui/logos/github-logo';
 
 interface SignInFormValues {
   email: string;
@@ -38,6 +38,7 @@ export function SignInForm({
   ...props
 }: React.ComponentProps<'div'>) {
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -63,10 +64,9 @@ export function SignInForm({
 
     onSubmit: async ({ value }) => {
       const { data, error } = await mutation.mutateAsync({ ...value });
-      console.log(data);
 
       if (data) {
-        redirect(`/dashboard/${data.user.id}`);
+        router.push('/dashboard');
       }
 
       if (error) {
@@ -205,7 +205,15 @@ export function SignInForm({
                 </span>
               </div>
               <div className="grid grid-cols-3 gap-4">
-                <AppleLogo />
+                {/* <AppleLogo /> */}
+                <GithubLogo
+                  onClick={async () => {
+                    await authClient.signIn.social({
+                      provider: 'github',
+                      callbackURL: '/dashboard',
+                    });
+                  }}
+                />
                 <GoogleLogo />
                 <MetaLogo />
               </div>
