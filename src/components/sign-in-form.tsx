@@ -16,6 +16,8 @@ import AppleLogo from './ui/logos/apple-logo';
 import GoogleLogo from './ui/logos/google-logo';
 import MetaLogo from './ui/logos/meta-logo';
 import Loader from './ui/loader';
+import { useState } from 'react';
+import { Eye, EyeClosed } from 'lucide-react';
 
 interface SignInFormValues {
   email: string;
@@ -34,6 +36,12 @@ export function SignInForm({
   className,
   ...props
 }: React.ComponentProps<'div'>) {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   const mutation = useMutation({
     mutationFn: async (value: SignInFormValues) => {
       return await authClient.signIn.email({
@@ -136,15 +144,32 @@ export function SignInForm({
                         Forgot your password?
                       </Link>
                     </div>
-                    <Input
-                      id="password"
-                      type="password"
-                      autoComplete="current-password"
-                      value={field.state.value}
-                      onChange={({ target }) =>
-                        field.handleChange(target.value)
-                      }
-                    />
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? 'text' : 'password'}
+                        autoComplete="current-password"
+                        value={field.state.value}
+                        onChange={({ target }) =>
+                          field.handleChange(target.value)
+                        }
+                      />
+                      <button
+                        type="button"
+                        className="absolute top-1/2 right-3 -translate-y-1/2"
+                        onClick={togglePasswordVisibility}
+                        aria-label={
+                          showPassword ? 'Hide password' : 'Show password'
+                        }
+                      >
+                        {showPassword ? (
+                          <Eye className="text-muted-foreground hover:text-foreground h-4 w-4 cursor-pointer" />
+                        ) : (
+                          <EyeClosed className="text-muted-foreground hover:text-forbuttond h-4 w-4 cursor-pointer" />
+                        )}
+                      </button>
+                    </div>
+
                     {field.state.meta.errors.length > 0 && (
                       <ul
                         className="mt-1 space-y-1 text-xs text-red-600"
