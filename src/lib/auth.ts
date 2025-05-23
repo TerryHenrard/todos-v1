@@ -5,6 +5,12 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { nextCookies } from 'better-auth/next-js';
 
 export const auth = betterAuth({
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60, // in seconds
+    },
+  },
   database: drizzleAdapter(db, {
     provider: 'pg',
     schema: {
@@ -16,10 +22,7 @@ export const auth = betterAuth({
   }),
   plugins: [nextCookies()],
   emailAndPassword: { enabled: true },
-  // socialProviders: {
-  //   github: {
-  //     clientId: '' as string,
-  //     clientSecret: '' as string,
-  //   },
-  // },
 });
+
+export type Session = typeof auth.$Infer.Session;
+

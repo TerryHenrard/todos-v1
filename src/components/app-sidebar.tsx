@@ -18,6 +18,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from './ui/tooltip';
+import { Separator } from './ui/separator';
+import AppSidebarFooter from './app-sidebar-footer';
 
 const menuItems = [
   {
@@ -53,7 +55,7 @@ export async function AppSidebar() {
                   <Info />
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>ctrl + b / ⌘ + b</p>
+                  <p>ctrl + b or ⌘ + b</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -74,6 +76,8 @@ export async function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <Separator />
+      <AppSidebarFooter session={session} />
     </Sidebar>
   );
 }
