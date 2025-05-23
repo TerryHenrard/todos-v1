@@ -12,6 +12,8 @@ import { z } from 'zod/v4';
 import { authClient } from '@/lib/auth-client';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { useMutation } from '@tanstack/react-query';
+import Loader from './ui/loader';
 
 interface SignUpFormValues {
   name: string;
@@ -28,6 +30,7 @@ const SignUpFormSchema = z.object({
   email: z.email('Invalid email address').trim().toLowerCase(),
   password: z
     .string()
+    .min(1, 'Password is required')
     .max(255, 'Password must be at most 255 characters long')
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
@@ -40,6 +43,15 @@ export function SignUpForm({
   ...props
 }: React.ComponentProps<'div'>) {
   const router = useRouter();
+
+  const mutation = useMutation({
+    mutationFn: async (value: SignUpFormValues) => {
+      return await authClient.signUp.email({
+        ...value,
+      });
+    },
+  });
+
   const form = useForm({
     defaultValues: {
       name: '',
@@ -48,30 +60,35 @@ export function SignUpForm({
     } as SignUpFormValues,
 
     onSubmit: async ({ value }) => {
-      const { data, error } = await authClient.signUp.email({
-        ...value,
-      });
+      const { data, error } = await mutation.mutateAsync({ ...value });
 
       if (data) {
         router.push('/dashboard');
         return;
       }
 
-      if (!error) return;
-
-      if (error.code === 'USER_ALREADY_EXISTS') {
-        toast('It seems you already have an account', {
-          action: {
-            label: 'Sign in',
-            onClick: async () => {
-              await authClient.signIn.email({
-                email: value.email,
-                password: value.password,
-                callbackURL: '/dashboard',
-              });
-            },
-          },
-        });
+      if (error) {
+        switch (error.code) {
+          case 'USER_ALREADY_EXISTS':
+            toast('It seems you already have an account', {
+              action: {
+                label: 'Sign in',
+                onClick: async () => {
+                  await authClient.signIn.email({
+                    email: value.email,
+                    password: value.password,
+                    callbackURL: '/dashboard',
+                  });
+                },
+              },
+            });
+            break;
+          default:
+            toast(
+              'An unexpected error occurred. If it persists please, let us know'
+            );
+            break;
+        }
       }
     },
 
@@ -191,8 +208,12 @@ export function SignUpForm({
                 )}
               </form.Field>
 
-              <Button type="submit" className="w-full">
-                Create account !
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={mutation.isPending}
+              >
+                {mutation.isPending ? <Loader /> : 'Create account !'}
               </Button>
               <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
                 <span className="bg-card text-muted-foreground relative z-10 px-2">
