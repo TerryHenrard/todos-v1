@@ -1,4 +1,4 @@
-import { db } from '@/db';
+import { db } from '@/db/db';
 import { accounts, sessions, users, verifications } from '@/db/schema';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
@@ -31,4 +31,3 @@ export const auth = betterAuth({
 });
 
 export type Session = typeof auth.$Infer.Session;
-
