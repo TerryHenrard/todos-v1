@@ -14,31 +14,30 @@ import {
   AlertDialogTrigger,
 } from '../ui/alert-dialog';
 import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { InferSelectModel } from 'drizzle-orm';
 import { todos } from '@/db/schema';
 import { deleteTodo } from '@/actions/todoAction';
 import Loader from '../ui/loader';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
 
 interface TodoActionsProps {
   id: InferSelectModel<typeof todos>['id'];
   title: InferSelectModel<typeof todos>['title'];
+  userId: InferSelectModel<typeof todos>['userId'];
 }
 
-const TodoActions = ({ id, title }: TodoActionsProps) => {
+const TodoActions = ({ id, title, userId }: TodoActionsProps) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const router = useRouter();
+
+  const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationKey: ['delete', id],
-    mutationFn: async () => {
-      const { isSuccess } = await deleteTodo(id);
-      if (isSuccess) {
-        router.refresh();
-        toast(`"${title}" deleted successfully`);
-      }
+    mutationFn: () => deleteTodo(id),
+    onSuccess: () => {
+      toast(`"${title}" deleted successfully`);
+      queryClient.invalidateQueries({ queryKey: ['todos', userId] });
     },
   });
 
@@ -83,4 +82,3 @@ const TodoActions = ({ id, title }: TodoActionsProps) => {
 };
 
 export default TodoActions;
-

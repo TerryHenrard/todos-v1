@@ -15,6 +15,12 @@ import { Check, Clock, Play } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 import TodoActions from './to-do-actions';
+import { type Session } from '@/lib/auth-client';
+import { formatDateShort, formatTimeDetailed } from '@/lib/formatters';
+
+interface ToDoCardProps extends TodoCardData {
+  userId: Session['user']['id'];
+}
 
 export default function TodoCard({
   id,
@@ -22,7 +28,8 @@ export default function TodoCard({
   title,
   description,
   createdAt,
-}: TodoCardData) {
+  userId,
+}: ToDoCardProps) {
   const finishedStyles = cn({
     'line-through opacity-33': status === 'finished',
   });
@@ -32,15 +39,16 @@ export default function TodoCard({
       <CardHeader>
         <div className="flex justify-between">
           <TodoBadge status={status} />
-          <TodoActions id={id} title={title} />
+          <TodoActions id={id} title={title} userId={userId} />
         </div>
         <CardTitle className={finishedStyles}>{title}</CardTitle>
       </CardHeader>
       <CardContent className={finishedStyles}>{description}</CardContent>
       <CardFooter className="flex justify-between text-gray-400">
-        <Button variant={'secondary'}>button</Button>
+        <Button variant={'secondary'}>button</Button>{' '}
         <span className="text-xs">
-          Créé le {createdAt.toLocaleDateString()}
+          Created the {formatDateShort(createdAt)} at{' '}
+          {formatTimeDetailed(createdAt)}
         </span>
       </CardFooter>
     </Card>
@@ -88,4 +96,3 @@ function TodoBadge({ status }: TodoBadgeProps) {
     </Badge>
   );
 }
-
