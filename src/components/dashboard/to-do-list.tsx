@@ -17,8 +17,6 @@ export default function ToDoList({ userId }: ToDoListProps) {
     queryFn: () => getTodosByUserId(userId),
   });
 
-  console.log(data);
-
   if (error) return <p>Failed to get to do&apos;s</p>;
 
   if (isPending) {
@@ -54,9 +52,9 @@ export default function ToDoList({ userId }: ToDoListProps) {
           title={todo.title}
           description={todo.description}
           status={todo.status}
+          userId={userId}
         />
       ))}
     </>
   );
 }
-
