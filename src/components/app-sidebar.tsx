@@ -8,16 +8,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { Home, Info, Settings, User } from 'lucide-react';
+import { Home, Settings, User } from 'lucide-react';
 import Link from 'next/link';
 import { getSession } from '@/lib/server-utils';
 import { redirect } from 'next/navigation';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from './ui/tooltip';
 import { Separator } from './ui/separator';
 import AppSidebarFooter from './app-sidebar-footer';
 
@@ -49,16 +43,6 @@ export async function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupLabel className="flex justify-between">
             <span>Todos-v1</span>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>ctrl + b or ⌘ + b</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -81,4 +65,3 @@ export async function AppSidebar() {
     </Sidebar>
   );
 }
-

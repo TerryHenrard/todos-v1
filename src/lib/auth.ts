@@ -1,5 +1,8 @@
-import { db } from '@/db';
-import { accounts, sessions, users, verifications } from '@/db/schema';
+import { db } from '@/db/db';
+import { accounts } from '@/db/schema/accounts';
+import { sessions } from '@/db/schema/sessions';
+import { users } from '@/db/schema/users';
+import { verifications } from '@/db/schema/verifications';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { nextCookies } from 'better-auth/next-js';
@@ -31,4 +34,3 @@ export const auth = betterAuth({
 });
 
 export type Session = typeof auth.$Infer.Session;
-

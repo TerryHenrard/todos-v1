@@ -1,3 +1,4 @@
+import ToDoList from '@/components/dashboard/to-do-list';
 import { getSession } from '@/lib/server-utils';
 import { redirect } from 'next/navigation';
 
@@ -7,15 +8,9 @@ export default async function DashboardPage() {
     redirect('/sign-in');
   }
 
-  // Use session.user.id directly - no need for URL parameter
-  const userId = session.user.id;
-
   return (
-    <div>
-      <h1>Welcome to your dashboard, {session.user.name}!</h1>
-      <p>Your user ID: {userId}</p>
-      {/* Add your dashboard content here */}
+    <div className="mx-auto w-full max-w-3xl min-w-0 px-4 sm:min-w-[500px]">
+      <ToDoList userId={session.user.id} />
     </div>
   );
 }
-
