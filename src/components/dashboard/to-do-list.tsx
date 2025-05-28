@@ -6,7 +6,7 @@ import { todos } from '@/db/schema';
 import { useQuery } from '@tanstack/react-query';
 import { getTodosByUserId } from '@/actions/todoAction';
 import { Skeleton } from '../ui/skeleton';
-
+import { motion } from 'motion/react';
 interface ToDoListProps {
   userId: InferSelectModel<typeof todos>['userId'];
 }
@@ -43,7 +43,11 @@ export default function ToDoList({ userId }: ToDoListProps) {
   if (data?.todos?.length === 0) return <p>You don&apos;t have to do yet</p>;
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
       {data?.todos?.map((todo) => (
         <TodoCard
           id={todo.id}
@@ -55,6 +59,6 @@ export default function ToDoList({ userId }: ToDoListProps) {
           userId={userId}
         />
       ))}
-    </>
+    </motion.div>
   );
 }

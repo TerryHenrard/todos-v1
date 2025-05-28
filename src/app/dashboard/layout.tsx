@@ -15,7 +15,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <SidebarTrigger />
+              <SidebarTrigger className="fixed" />
             </TooltipTrigger>
             <TooltipContent>
               <p>ctrl + b or ⌘ + b</p>
