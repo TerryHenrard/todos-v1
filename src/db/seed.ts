@@ -81,8 +81,7 @@ async function main() {
 
     console.log('✅ Database seeded successfully!');
     console.log('📊 Created:');
-    console.log('  - 5 users');
-    console.log('  - 20 todos distributed across users');
+    console.log('  - 5 todos distributed across users');
     console.log('  - Distribution: more todos for user1, fewer for user5');
     console.log(
       '  - Status distribution: 40% to do, 40% to complete, 20% finished'

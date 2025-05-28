@@ -12,8 +12,10 @@ export const todos = pgTable('todos', {
   id: uuid().defaultRandom().primaryKey(),
   title: varchar({ length: 256 }).notNull(),
   description: text().notNull(),
-  status: todoStatusEnum().default(todoStatusEnum.enumValues[0]),
+  status: todoStatusEnum().default(todoStatusEnum.enumValues[0]).notNull(),
   ...timestamps,
-  userId: text('user_id').references(() => users.id),
+  userId: text('user_id')
+    .references(() => users.id)
+    .notNull(),
 });
 
