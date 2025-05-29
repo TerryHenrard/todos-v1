@@ -11,11 +11,10 @@ export const todoStatusEnum = pgEnum('todo_status', [
 export const todos = pgTable('todos', {
   id: uuid().defaultRandom().primaryKey(),
   title: varchar({ length: 256 }).notNull(),
-  description: text().notNull(),
+  description: text(),
   status: todoStatusEnum().default(todoStatusEnum.enumValues[0]).notNull(),
   ...timestamps,
   userId: text('user_id')
     .references(() => users.id)
     .notNull(),
 });
-

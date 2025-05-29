@@ -2,6 +2,7 @@
 
 import { db } from '@/db/db';
 import { todos } from '@/db/schema';
+import { InsertTodo } from '@/types';
 import { eq, InferSelectModel } from 'drizzle-orm';
 
 export const getTodosByUserId = async (
@@ -23,10 +24,18 @@ export const getTodosByUserId = async (
 
 export const deleteTodo = async (id: InferSelectModel<typeof todos>['id']) => {
   try {
-    await db.delete(todos).where(eq(todos.id, id));
-    return { message: 'To do deleted successfully', isSuccess: true };
+    const { rowCount } = await db.delete(todos).where(eq(todos.id, id));
+    return { message: 'To do deleted successfully', isSuccess: rowCount > 0 };
   } catch {
     return { message: 'Failed to delete to do', isSuccess: false };
   }
 };
 
+export const insertTodo = async (todo: InsertTodo) => {
+  try {
+    const { rowCount } = await db.insert(todos).values(todo);
+    return { message: 'To do inserted successfully', isSuccess: rowCount > 0 };
+  } catch {
+    return { message: 'Failed to insert to do', isSuccess: false };
+  }
+};
