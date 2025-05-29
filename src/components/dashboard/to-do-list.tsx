@@ -66,6 +66,7 @@ export default function ToDoList({ userId }: ToDoListProps) {
               description={todo.description}
               status={todo.status}
               userId={userId}
+              updatedAt={todo.updatedAt}
             />
           </motion.div>
         ))}

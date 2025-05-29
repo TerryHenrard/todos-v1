@@ -7,25 +7,42 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { Button } from '../ui/button';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { InsertTodo } from '@/types';
+import { InsertTodo, UpdateTodo } from '@/types';
 import { InferSelectModel } from 'drizzle-orm';
 import { todos } from '@/db/schema';
 import Loader from '../ui/loader';
 import { toast } from 'sonner';
 
-interface TodoFormProps {
+// Create specific mutation function types
+type AddTodoMutation = (
+  todo: InsertTodo
+) => Promise<{ message: string; isSuccess: boolean }>;
+type UpdateTodoMutation = (
+  todo: UpdateTodo
+) => Promise<{ message: string; isSuccess: boolean }>;
+
+interface TodoFormPropsBase {
   userId: InferSelectModel<typeof todos>['userId'];
-  todo?: ToDoFormValues;
-  behavior: 'adding' | 'updating';
   onSuccess: () => void;
-  mutationFn: (
-    todo: InsertTodo
-  ) => Promise<{ message: string; isSuccess: boolean }>;
 }
 
+interface AddTodoFormProps extends TodoFormPropsBase {
+  behavior: 'adding';
+  mutationFn: AddTodoMutation;
+  todo?: never;
+}
+
+interface UpdateTodoFormProps extends TodoFormPropsBase {
+  behavior: 'updating';
+  mutationFn: UpdateTodoMutation;
+  todo: ToDoFormValues & { id: InferSelectModel<typeof todos>['id'] };
+}
+
+type TodoFormProps = AddTodoFormProps | UpdateTodoFormProps;
+
 interface ToDoFormValues {
-  title: string;
-  description: string | null;
+  title: InferSelectModel<typeof todos>['title'];
+  description: InferSelectModel<typeof todos>['description'];
 }
 
 const ToDoFormSchema = z.object({
@@ -37,18 +54,30 @@ const ToDoFormSchema = z.object({
   description: z.string().nullable(),
 });
 
-const ToDoForm = ({
-  userId,
-  todo = { title: '', description: '' },
-  behavior,
-  onSuccess,
-  mutationFn,
-}: TodoFormProps) => {
+function ToDoForm(props: TodoFormProps) {
+  const { userId, behavior, onSuccess, mutationFn } = props;
+  const todo =
+    behavior === 'updating'
+      ? props.todo
+      : { id: '', title: '', description: '' };
+
   const queryClient = useQueryClient();
-  const mutation = useMutation({
-    mutationFn,
+
+  // Type the mutation explicitly to avoid union type issues
+  const mutation = useMutation<
+    { message: string; isSuccess: boolean },
+    Error,
+    InsertTodo | UpdateTodo
+  >({
+    mutationFn: async (todoData: InsertTodo | UpdateTodo) => {
+      if (behavior === 'adding') {
+        return await (mutationFn as AddTodoMutation)(todoData as InsertTodo);
+      } else {
+        return await (mutationFn as UpdateTodoMutation)(todoData as UpdateTodo);
+      }
+    },
     onError: (error) => {
-      console.error('Error adding todo:', error);
+      console.error('Error processing todo:', error);
     },
   });
 
@@ -63,7 +92,24 @@ const ToDoForm = ({
     },
     onSubmit: async ({ value }) => {
       try {
-        const { isSuccess } = await mutation.mutateAsync({ ...value, userId });
+        let todoData: InsertTodo | UpdateTodo;
+
+        if (behavior === 'adding') {
+          // For InsertTodo - include userId
+          todoData = { ...value, userId } as InsertTodo;
+        } else {
+          // For UpdateTodo - include id, exclude userId
+          if (!todo?.id) {
+            throw new Error('Todo ID is required for updates');
+          }
+          todoData = {
+            id: todo.id,
+            title: value.title,
+            description: value.description,
+          } as UpdateTodo;
+        }
+
+        const { isSuccess } = await mutation.mutateAsync(todoData);
         if (isSuccess) {
           queryClient.invalidateQueries({ queryKey: ['todos', userId] });
           form.reset();
@@ -73,8 +119,8 @@ const ToDoForm = ({
           );
         }
       } catch (error) {
-        toast('An unexpected error append');
-        console.error('Error adding todo:', error);
+        toast('An unexpected error occurred');
+        console.error('Error processing todo:', error);
       }
     },
   });
@@ -88,7 +134,6 @@ const ToDoForm = ({
         form.handleSubmit();
       }}
     >
-      {' '}
       <h2 id="add-todo-form-title" className="sr-only">
         {behavior === 'adding' ? 'Add Todo' : 'Update Todo'}
       </h2>
@@ -143,14 +188,13 @@ const ToDoForm = ({
             ) : null}
           </div>
         )}
-      </form.Field>{' '}
+      </form.Field>
       <div className="flex flex-col items-stretch justify-end gap-2 pt-2 sm:flex-row sm:items-center">
         <Button
           type="submit"
           className="w-full sm:w-auto"
           disabled={form.state.isSubmitting || mutation.isPending}
         >
-          {' '}
           {form.state.isSubmitting || mutation.isPending ? (
             <>
               <Loader />
@@ -167,6 +211,6 @@ const ToDoForm = ({
       </div>
     </form>
   );
-};
+}
 
 export default ToDoForm;

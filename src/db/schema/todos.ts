@@ -9,7 +9,7 @@ export const todoStatusEnum = pgEnum('todo_status', [
 ]);
 
 export const todos = pgTable('todos', {
-  id: uuid().defaultRandom().primaryKey(),
+  id: uuid().defaultRandom().primaryKey().notNull(),
   title: varchar({ length: 256 }).notNull(),
   description: text(),
   status: todoStatusEnum().default(todoStatusEnum.enumValues[0]).notNull(),

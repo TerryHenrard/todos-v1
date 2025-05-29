@@ -28,6 +28,7 @@ export default function TodoCard({
   title,
   description,
   createdAt,
+  updatedAt,
   userId,
 }: ToDoCardProps) {
   const finishedStyles = cn({
@@ -39,17 +40,29 @@ export default function TodoCard({
       <CardHeader>
         <div className="flex justify-between">
           <TodoBadge status={status} />
-          <TodoActions id={id} title={title} userId={userId} />
+          <TodoActions
+            id={id}
+            title={title}
+            userId={userId}
+            description={description}
+          />
         </div>
         <CardTitle className={finishedStyles}>{title}</CardTitle>
       </CardHeader>
       <CardContent className={finishedStyles}>{description}</CardContent>
       <CardFooter className="flex justify-between text-gray-400">
-        <Button variant={'secondary'}>button</Button>{' '}
-        <span className="text-xs">
-          Created the {formatDateShort(createdAt)} at{' '}
-          {formatTimeDetailed(createdAt)}
-        </span>
+        <Button variant={'secondary'}>button</Button>
+        {updatedAt ? (
+          <span className="text-xs">
+            Last updated on {formatDateShort(updatedAt)} at{' '}
+            {formatTimeDetailed(updatedAt)}
+          </span>
+        ) : (
+          <span className="text-xs">
+            Created on {formatDateShort(createdAt)} at{' '}
+            {formatTimeDetailed(createdAt)}
+          </span>
+        )}
       </CardFooter>
     </Card>
   );

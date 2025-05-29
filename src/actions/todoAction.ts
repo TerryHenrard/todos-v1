@@ -2,7 +2,7 @@
 
 import { db } from '@/db/db';
 import { todos } from '@/db/schema';
-import { InsertTodo } from '@/types';
+import { InsertTodo, UpdateTodo } from '@/types';
 import { eq, InferSelectModel } from 'drizzle-orm';
 
 export const getTodosByUserId = async (
@@ -37,5 +37,21 @@ export const insertTodo = async (todo: InsertTodo) => {
     return { message: 'To do inserted successfully', isSuccess: rowCount > 0 };
   } catch {
     return { message: 'Failed to insert to do', isSuccess: false };
+  }
+};
+
+export const updateTodo = async (todo: UpdateTodo) => {
+  try {
+    const { rowCount } = await db
+      .update(todos)
+      .set({
+        title: todo.title,
+        description: todo.description,
+        updatedAt: new Date(),
+      })
+      .where(eq(todos.id, todo.id));
+    return { message: 'To do updated successfully', isSuccess: rowCount > 0 };
+  } catch {
+    return { message: 'Failed to update to do', isSuccess: false };
   }
 };
