@@ -67,6 +67,7 @@ export function SignInForm({
 
       if (data) {
         router.push('/dashboard');
+        return;
       }
 
       if (error) {
@@ -77,6 +78,7 @@ export function SignInForm({
           default:
             break;
         }
+        return;
       }
 
       if (mutation.isError) {
@@ -170,7 +172,7 @@ export function SignInForm({
                         {showPassword ? (
                           <Eye className="text-muted-foreground hover:text-foreground h-4 w-4 cursor-pointer" />
                         ) : (
-                          <EyeClosed className="text-muted-foreground hover:text-forbuttond h-4 w-4 cursor-pointer" />
+                          <EyeClosed className="text-muted-foreground hover:text-foreground h-4 w-4 cursor-pointer" />
                         )}
                       </button>
                     </div>
@@ -244,4 +246,3 @@ export function SignInForm({
     </div>
   );
 }
-

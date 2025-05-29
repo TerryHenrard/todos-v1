@@ -6,7 +6,7 @@ import { todos } from '@/db/schema';
 import { useQuery } from '@tanstack/react-query';
 import { getTodosByUserId } from '@/actions/todoAction';
 import { Skeleton } from '../ui/skeleton';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 interface ToDoListProps {
   userId: InferSelectModel<typeof todos>['userId'];
 }
@@ -21,7 +21,7 @@ export default function ToDoList({ userId }: ToDoListProps) {
 
   if (isPending) {
     return (
-      <div className="space-y-4">
+      <div className="mt-5 space-y-4">
         {Array.from({ length: 5 }).map(() => (
           <div
             key={crypto.randomUUID()}
@@ -41,24 +41,35 @@ export default function ToDoList({ userId }: ToDoListProps) {
   }
 
   if (data?.todos?.length === 0) return <p>You don&apos;t have to do yet</p>;
-
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      {data?.todos?.map((todo) => (
-        <TodoCard
-          id={todo.id}
-          key={todo.id}
-          createdAt={todo.createdAt}
-          title={todo.title}
-          description={todo.description}
-          status={todo.status}
-          userId={userId}
-        />
-      ))}
-    </motion.div>
+    <AnimatePresence mode="wait">
+      <motion.div
+        key="todo-list"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+      >
+        {data?.todos?.map((todo) => (
+          <motion.div
+            key={todo.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            layout
+          >
+            <TodoCard
+              id={todo.id}
+              createdAt={todo.createdAt}
+              title={todo.title}
+              description={todo.description}
+              status={todo.status}
+              userId={userId}
+            />
+          </motion.div>
+        ))}
+      </motion.div>
+    </AnimatePresence>
   );
 }
